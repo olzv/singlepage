@@ -8,10 +8,12 @@ steps:
     waitFor:
       - build
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    args: ['run', '-i', 'gcr.io/$PROJECT_ID/singlepage:pr-$_PR_NUMBER', '-a', 'singlepage-review-pr-$_PR_NUMBER']
+    args:
+      - 'run'
+      - '--image=gcr.io/$PROJECT_ID/singlepage:pr-$_PR_NUMBER'
+      - '--app=singlepage-review-pr-$_PR_NUMBER'
+      - '--cluster=cluster-1'
+      - '--location=us-central1-c'
     id: release
     waitFor:
       - push
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
