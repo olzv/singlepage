@@ -14,6 +14,7 @@ steps:
       - '--app=singlepage-pr-$_PR_NUMBER'
       - '--cluster=cluster-1'
       - '--location=us-central1-c'
+      - '--expose=80'
     id: release
     waitFor:
       - push
