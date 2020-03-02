@@ -1,17 +1,20 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/singlepage:_PR_NUMBER', '-f', 'Dockerfile', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/singlepage-pr-$_PR_NUMBER', '-f', 'Dockerfile', '.']
     id: build
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/singlepage:_PR_NUMBER']
+    args: ['push', 'gcr.io/$PROJECT_ID/singlepage-pr-$_PR_NUMBER']
     id: push
     waitFor:
       - build
   - name: 'gcr.io/cloud-builders/gke-deploy'
-    args: ['run', '-i', 'gcr.io/$PROJECT_ID/singlepage:_PR_NUMBER', '-a', 'singlepage-review-_PR_NUMBER']
+    args:
+      - 'run'
+      - '--image=gcr.io/$PROJECT_ID/singlepage-pr-$_PR_NUMBER'
+      - '--app=singlepage-pr-$_PR_NUMBER'
+      - '--cluster=cluster-1'
+      - '--location=us-central1-c'
+      - '--expose=80'
     id: release
     waitFor:
       - push
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
